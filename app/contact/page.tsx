@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Phone, Clock, Mail } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { MapPin, Phone, Clock, Mail, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import Image from "next/image"
 import { adminData } from '@/lib/admin'
 import type { RestaurantInfo } from '@/lib/admin/types'
@@ -16,6 +17,20 @@ export default function ContactPage() {
   // State for dynamic data
   const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo | null>(null)
   const [loading, setLoading] = useState(true)
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null
+    message: string
+  }>({ type: null, message: '' })
 
   useEffect(() => {
     loadRestaurantInfo()
@@ -32,8 +47,8 @@ export default function ContactPage() {
         name: 'Rice & Spice',
         address: '1200 W Main St Ste 10, Peoria, IL 61606',
         phone: '(309) 670-1029',
-        email: 'info@riceandspice.com',
-        website: 'https://riceandspice.com',
+        email: 'contact@riceandspicepeoria.com',
+        website: 'https://riceandspicepeoria.com',
         hours: {
           monday: '11:00AM - 2:30PM, 4:30PM - 9:00PM',
           tuesday: '11:00AM - 2:30PM, 4:30PM - 9:00PM',
@@ -48,6 +63,99 @@ export default function ContactPage() {
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // Clear any previous error messages when user starts typing
+    if (submitStatus.type === 'error') {
+      setSubmitStatus({ type: null, message: '' })
+    }
+  }
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus({ type: null, message: '' })
+
+    try {
+      // Validate required fields
+      if (!formData.name || !formData.email || !formData.message) {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Please fill in all required fields (Name, Email, and Message).'
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Please enter a valid email address.'
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Prepare form data for Formspree
+      const formDataToSend = new FormData()
+      formDataToSend.append('name', formData.name)
+      formDataToSend.append('email', formData.email)
+      formDataToSend.append('phone', formData.phone)
+      formDataToSend.append('subject', formData.subject)
+      formDataToSend.append('message', formData.message)
+      
+      // Add hidden fields for Formspree
+      formDataToSend.append('_cc', 'abir@riceandspicepeoria.com') // CC to Abir
+      formDataToSend.append('_subject', `Contact Form: ${formData.subject || 'New Message'}`)
+      formDataToSend.append('_replyto', formData.email)
+      formDataToSend.append('_next', window.location.href) // Stay on same page
+
+      // Submit to Formspree
+      const response = await fetch('https://formspree.io/f/meokwkyq', {
+        method: 'POST',
+        body: formDataToSend,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: 'success',
+          message: 'Thank you for your message! We\'ll get back to you soon.'
+        })
+        
+        // Clear form after successful submission
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        })
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to send message')
+      }
+    } catch (error) {
+      console.error('Form submission error:', error)
+      setSubmitStatus({
+        type: 'error',
+        message: 'Sorry, there was an error sending your message. Please try again or call us directly.'
+      })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -94,27 +202,55 @@ export default function ContactPage() {
                   Get In Touch
                 </h2>
 
-                <form className="space-y-6 flex-1">
+                {/* Success/Error Messages */}
+                {submitStatus.type && (
+                  <Alert className={`mb-6 ${
+                    submitStatus.type === 'success' 
+                      ? 'border-green-500 bg-green-900/50' 
+                      : 'border-red-500 bg-red-900/50'
+                  }`}>
+                    {submitStatus.type === 'success' ? (
+                      <CheckCircle className="h-4 w-4 text-green-400" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-red-400" />
+                    )}
+                    <AlertDescription className={
+                      submitStatus.type === 'success' ? 'text-green-200' : 'text-red-200'
+                    }>
+                      {submitStatus.message}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6 flex-1">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <label htmlFor="name" className="text-base font-semibold text-amber-100">
-                        Name
+                        Name *
                       </label>
                       <Input 
-                        id="name" 
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
                         placeholder="Your name" 
                         className="h-12 border-yellow-600/50 bg-yellow-900/30 text-amber-100 placeholder:text-amber-300 focus:border-yellow-500 focus:ring-yellow-500/20 text-base" 
+                        required
                       />
                     </div>
                     <div className="space-y-3">
                       <label htmlFor="email" className="text-base font-semibold text-amber-100">
-                        Email
+                        Email *
                       </label>
                       <Input 
-                        id="email" 
-                        type="email" 
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
                         placeholder="Your email" 
                         className="h-12 border-yellow-600/50 bg-yellow-900/30 text-amber-100 placeholder:text-amber-300 focus:border-yellow-500 focus:ring-yellow-500/20 text-base" 
+                        required
                       />
                     </div>
                   </div>
@@ -123,7 +259,10 @@ export default function ContactPage() {
                       Phone
                     </label>
                     <Input 
-                      id="phone" 
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
                       placeholder="Your phone number" 
                       className="h-12 border-yellow-600/50 bg-yellow-900/30 text-amber-100 placeholder:text-amber-300 focus:border-yellow-500 focus:ring-yellow-500/20 text-base" 
                     />
@@ -133,26 +272,41 @@ export default function ContactPage() {
                       Subject
                     </label>
                     <Input 
-                      id="subject" 
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
                       placeholder="Subject" 
                       className="h-12 border-yellow-600/50 bg-yellow-900/30 text-amber-100 placeholder:text-amber-300 focus:border-yellow-500 focus:ring-yellow-500/20 text-base" 
                     />
                   </div>
                   <div className="space-y-3 flex-1">
                     <label htmlFor="message" className="text-base font-semibold text-amber-100">
-                      Message
+                      Message *
                     </label>
                     <Textarea 
-                      id="message" 
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
                       placeholder="Your message" 
                       className="min-h-[200px] border-yellow-600/50 bg-yellow-900/30 text-amber-100 placeholder:text-amber-300 focus:border-yellow-500 focus:ring-yellow-500/20 text-base resize-none" 
+                      required
                     />
                   </div>
                   <Button 
                     type="submit" 
-                    className="w-full h-14 bg-yellow-600 hover:bg-yellow-700 text-amber-900 font-bold rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 border-2 border-yellow-500"
+                    disabled={isSubmitting}
+                    className="w-full h-14 bg-yellow-600 hover:bg-yellow-700 text-amber-900 font-bold rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 border-2 border-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    Send Message
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Sending Message...
+                      </>
+                    ) : (
+                      'Send Message'
+                    )}
                   </Button>
                 </form>
               </div>

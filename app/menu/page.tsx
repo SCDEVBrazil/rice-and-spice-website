@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, RefreshCw, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MenuSectionImage } from "@/components/menu-section-image"
 import { adminData } from '@/lib/admin'
 import type { MenuItem } from '@/lib/admin/types'
@@ -404,6 +405,7 @@ export default function MenuPage() {
   const [categories, setCategories] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
+  const [currentTab, setCurrentTab] = useState('tiffin')
 
   useEffect(() => {
     loadMenuData()
@@ -516,49 +518,56 @@ export default function MenuPage() {
 
             {/* Menu Tabs */}
             {!loading && !error && (
-              <Tabs defaultValue="tiffin" className="w-full">
+              <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
                 <TabsList className="mb-8 w-full bg-transparent border-0 p-0">
-                  {/* Mobile: Grid layout with wrapping */}
-                  <div className="grid grid-cols-2 gap-2 sm:hidden">
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="tiffin" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tiffin</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Starter</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="non-veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-1 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Starter</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Curry</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="egg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Egg Curry</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="non-veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-1 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Curry</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="bread" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Bread</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="rice" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Rice</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="others" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Others</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="noodles" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Noodles</TabsTrigger>
-                    </div>
-                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center shadow-lg">
-                      <TabsTrigger value="tandoor" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-2 rounded-md text-xs font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tandoor</TabsTrigger>
-                    </div>
+                  
+                  {/* Mobile: Dropdown Menu */}
+                  <div className="md:hidden mb-6">
+                    <Select value={currentTab} onValueChange={setCurrentTab}>
+                      <SelectTrigger className="w-full h-12 bg-yellow-900/50 border-2 border-yellow-600/50 text-amber-100 text-base font-medium shadow-lg">
+                        <SelectValue placeholder="Select Menu Category" className="text-amber-100" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-yellow-900/95 backdrop-blur-sm border-2 border-yellow-600/50 text-amber-100">
+                        <SelectItem value="tiffin" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🥞 Tiffin (South Indian)
+                        </SelectItem>
+                        <SelectItem value="veg-starter" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🥗 Veg Starter
+                        </SelectItem>
+                        <SelectItem value="non-veg-starter" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍗 Non-Veg Starter
+                        </SelectItem>
+                        <SelectItem value="veg-curry" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍛 Veg Curry
+                        </SelectItem>
+                        <SelectItem value="egg-curry" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🥚 Egg Curry
+                        </SelectItem>
+                        <SelectItem value="non-veg-curry" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍖 Non-Veg Curry
+                        </SelectItem>
+                        <SelectItem value="bread" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍞 Bread (Naan & Roti)
+                        </SelectItem>
+                        <SelectItem value="rice" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍚 Rice & Biryani
+                        </SelectItem>
+                        <SelectItem value="others" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍰 Others (Desserts)
+                        </SelectItem>
+                        <SelectItem value="noodles" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🍜 Noodles
+                        </SelectItem>
+                        <SelectItem value="tandoor" className="text-amber-100 hover:bg-yellow-600/30 focus:bg-yellow-600/30 cursor-pointer">
+                          🔥 Tandoor
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  {/* Desktop: Horizontal scroll layout for smaller screens, flex for larger */}
-                  <div className="hidden sm:block">
-                    {/* Tablet: Horizontal scrolling */}
-                    <div className="lg:hidden overflow-x-auto pb-2">
+                  {/* Tablet: Horizontal scrolling */}
+                  <div className="hidden md:block lg:hidden">
+                    <div className="overflow-x-auto pb-2">
                       <div className="flex gap-2 min-w-max">
                         <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center min-w-[100px] shadow-lg">
                           <TabsTrigger value="tiffin" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent whitespace-nowrap">Tiffin</TabsTrigger>
@@ -595,42 +604,42 @@ export default function MenuPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Large Desktop: Your original flex layout */}
-                    <div className="hidden lg:flex gap-3 h-14 items-center">
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="tiffin" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tiffin</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Starter</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[1.3] shadow-lg">
-                        <TabsTrigger value="non-veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Starter</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Curry</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="egg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Egg Curry</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[1.3] shadow-lg">
-                        <TabsTrigger value="non-veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Curry</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[0.8] shadow-lg">
-                        <TabsTrigger value="bread" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Bread</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[0.8] shadow-lg">
-                        <TabsTrigger value="rice" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Rice</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="others" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Others</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="noodles" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Noodles</TabsTrigger>
-                      </div>
-                      <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
-                        <TabsTrigger value="tandoor" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tandoor</TabsTrigger>
-                      </div>
+                  {/* Large Desktop: Original flex layout */}
+                  <div className="hidden lg:flex gap-3 h-14 items-center">
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="tiffin" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tiffin</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Starter</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[1.3] shadow-lg">
+                      <TabsTrigger value="non-veg-starter" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Starter</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Veg Curry</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="egg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Egg Curry</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[1.3] shadow-lg">
+                      <TabsTrigger value="non-veg-curry" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Non-Veg Curry</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[0.8] shadow-lg">
+                      <TabsTrigger value="bread" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Bread</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-[0.8] shadow-lg">
+                      <TabsTrigger value="rice" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Rice</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="others" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Others</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="noodles" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Noodles</TabsTrigger>
+                    </div>
+                    <div className="bg-yellow-900/50 rounded-lg border-2 border-yellow-600/50 h-12 flex items-center justify-center flex-1 shadow-lg">
+                      <TabsTrigger value="tandoor" className="text-amber-100 hover:text-yellow-400 data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 py-2 px-3 rounded-md text-sm font-medium transition-all duration-200 h-10 w-full flex items-center justify-center border-0 bg-transparent">Tandoor</TabsTrigger>
                     </div>
                   </div>
                 </TabsList>

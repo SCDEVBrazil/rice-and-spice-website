@@ -6,7 +6,12 @@ import {
   signOut,
   User,
   onAuthStateChanged,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  updateProfile,
+  updateEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth'
 import { 
   doc, 
@@ -20,15 +25,26 @@ import {
   where,
   updateDoc
 } from 'firebase/firestore'
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
+} from 'firebase/storage'
 import { auth, db } from '@/lib/firebase'
 
+// Updated AdminUser interface with profile fields
 export interface AdminUser {
   uid: string
+  id?: string // For compatibility with ProfileManagement component
   email: string
   role: 'owner' | 'manager'
   createdAt: string
   lastLogin?: string
   invitedBy: string
+  displayName?: string
+  profilePicture?: string
 }
 
 export interface InviteCode {
@@ -44,7 +60,18 @@ export interface InviteCode {
   currentUses: number
 }
 
+// Profile update interface
+export interface ProfileUpdateData {
+  displayName?: string
+  email?: string
+  currentPassword?: string
+  newPassword?: string
+}
+
 export class FirebaseAuthManager {
+  // Initialize Firebase Storage
+  private static storage = getStorage()
+
   // Generate invite code
   static async generateInviteCode(createdBy: string, expiresInHours: number = 168): Promise<{ success: boolean; message: string; code?: string }> {
     try {
@@ -156,12 +183,21 @@ export class FirebaseAuthManager {
       const adminSnapshot = await getDocs(collection(db, 'admin-users'))
       const isFirstAdmin = adminSnapshot.empty
 
+      // Set default display name from email
+      const defaultDisplayName = email.split('@')[0]
+
+      // Update Firebase Auth profile
+      await updateProfile(user, {
+        displayName: defaultDisplayName
+      })
+
       const adminUser: AdminUser = {
         uid: user.uid,
         email: user.email!,
         role: isFirstAdmin ? 'owner' : 'manager', // First admin is owner, others are managers
         createdAt: new Date().toISOString(),
-        invitedBy: inviteCode
+        invitedBy: inviteCode,
+        displayName: defaultDisplayName
       }
 
       // Save admin user to Firestore
@@ -214,6 +250,156 @@ export class FirebaseAuthManager {
       }
       
       return { success: false, message }
+    }
+  }
+
+  // NEW: Update admin profile
+  static async updateAdminProfile(data: ProfileUpdateData): Promise<{ success: boolean; message: string }> {
+    try {
+      const user = auth.currentUser
+      if (!user) {
+        throw new Error('No authenticated user found')
+      }
+
+      const updates: any = {}
+      let requiresReauth = false
+
+      // Handle display name update
+      if (data.displayName && data.displayName !== user.displayName) {
+        await updateProfile(user, { displayName: data.displayName })
+        updates.displayName = data.displayName
+      }
+
+      // Handle email update (requires re-authentication)
+      if (data.email && data.email !== user.email) {
+        if (!data.currentPassword) {
+          throw new Error('Current password is required to change email')
+        }
+        
+        // Re-authenticate user
+        const credential = EmailAuthProvider.credential(user.email!, data.currentPassword)
+        await reauthenticateWithCredential(user, credential)
+        
+        // Update email
+        await updateEmail(user, data.email)
+        updates.email = data.email
+        requiresReauth = true
+      }
+
+      // Handle password update (requires re-authentication)
+      if (data.newPassword) {
+        if (!data.currentPassword) {
+          throw new Error('Current password is required to change password')
+        }
+
+        // Re-authenticate user if not already done for email
+        if (!requiresReauth) {
+          const credential = EmailAuthProvider.credential(user.email!, data.currentPassword)
+          await reauthenticateWithCredential(user, credential)
+        }
+        
+        // Update password
+        await updatePassword(user, data.newPassword)
+      }
+
+      // Update Firestore document if there are changes
+      if (Object.keys(updates).length > 0) {
+        await updateDoc(doc(db, 'admin-users', user.uid), {
+          ...updates,
+          lastLogin: new Date().toISOString()
+        })
+      }
+
+      return { success: true, message: 'Profile updated successfully' }
+    } catch (error: any) {
+      console.error('Error updating profile:', error)
+      
+      let message = 'Failed to update profile'
+      if (error.code === 'auth/wrong-password') {
+        message = 'Current password is incorrect'
+      } else if (error.code === 'auth/email-already-in-use') {
+        message = 'This email is already in use by another account'
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'Invalid email address'
+      } else if (error.code === 'auth/weak-password') {
+        message = 'New password is too weak. Please use at least 6 characters'
+      } else if (error.code === 'auth/requires-recent-login') {
+        message = 'Please sign out and sign back in to make this change'
+      } else if (error.message) {
+        message = error.message
+      }
+      
+      return { success: false, message }
+    }
+  }
+
+  // NEW: Upload profile picture
+  static async uploadProfilePicture(file: File, userId: string): Promise<string> {
+    try {
+      const user = auth.currentUser
+      if (!user) {
+        throw new Error('No authenticated user found')
+      }
+
+      // Create a reference for the file
+      const storageRef = ref(this.storage, `profile-pictures/${userId}/${Date.now()}_${file.name}`)
+      
+      // Upload the file
+      const snapshot = await uploadBytes(storageRef, file)
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref)
+      
+      // Update the user's profile picture in Firestore
+      await updateDoc(doc(db, 'admin-users', userId), {
+        profilePicture: downloadURL
+      })
+      
+      // Update Firebase Auth profile
+      await updateProfile(user, {
+        photoURL: downloadURL
+      })
+
+      return downloadURL
+    } catch (error) {
+      console.error('Error uploading profile picture:', error)
+      throw new Error('Failed to upload profile picture')
+    }
+  }
+
+  // NEW: Delete profile picture
+  static async deleteProfilePicture(userId: string, imageUrl: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const user = auth.currentUser
+      if (!user) {
+        throw new Error('No authenticated user found')
+      }
+
+      // Delete from Firebase Storage
+      if (imageUrl && imageUrl.includes('firebase')) {
+        try {
+          const imageRef = ref(this.storage, imageUrl)
+          await deleteObject(imageRef)
+        } catch (storageError) {
+          console.warn('Could not delete image from storage:', storageError)
+          // Continue with Firestore update even if storage deletion fails
+        }
+      }
+
+      // Update Firestore
+      await updateDoc(doc(db, 'admin-users', userId), {
+        profilePicture: null
+      })
+
+      // Update Firebase Auth profile
+      await updateProfile(user, {
+        photoURL: null
+      })
+
+      return { success: true, message: 'Profile picture removed successfully' }
+    } catch (error) {
+      console.error('Error deleting profile picture:', error)
+      return { success: false, message: 'Failed to remove profile picture' }
     }
   }
 
@@ -272,7 +458,7 @@ export class FirebaseAuthManager {
     }
   }
 
-  // Get current admin user
+  // ENHANCED: Get current admin user with profile data
   static async getCurrentAdmin(): Promise<AdminUser | null> {
     try {
       const user = auth.currentUser
@@ -283,7 +469,15 @@ export class FirebaseAuthManager {
       
       if (!docSnap.exists()) return null
       
-      return docSnap.data() as AdminUser
+      const adminData = docSnap.data() as AdminUser
+      
+      // Add compatibility field for ProfileManagement component
+      return {
+        ...adminData,
+        id: adminData.uid, // Add id field for compatibility
+        displayName: adminData.displayName || user.displayName || adminData.email.split('@')[0],
+        profilePicture: adminData.profilePicture || user.photoURL || undefined
+      }
     } catch (error) {
       console.error('Error getting current admin:', error)
       return null
@@ -329,7 +523,7 @@ export class FirebaseAuthManager {
     }
   }
 
-  // NEW: Delete specific invite code
+  // Delete specific invite code
   static async deleteInviteCode(codeId: string): Promise<{ success: boolean; message: string }> {
     try {
       await deleteDoc(doc(db, 'invite-codes', codeId))
@@ -391,14 +585,4 @@ export class FirebaseAuthManager {
       return { success: false, message: 'Failed to initialize admin system' }
     }
   }
-
-  // Helper method to generate random codes (REMOVED - now using inline generation)
-  // private static generateRandomCode(): string {
-  //   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  //   let result = ''
-  //   for (let i = 0; i < 8; i++) {
-  //     result += chars.charAt(Math.floor(Math.random() * chars.length))
-  //   }
-  //   return result
-  // }
 }

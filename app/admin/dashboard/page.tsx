@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { ProfileManagement } from '@/components/admin/ProfileManagement'
 import { 
   TrendingUp, 
   Settings, 
@@ -22,7 +23,8 @@ import {
   Clock,
   MapPin,
   Phone,
-  RefreshCw
+  RefreshCw,
+  User
 } from 'lucide-react'
 import { LogoWithIcon } from '@/components/logos'
 import { FirebaseAuthManager } from '@/lib/admin/firebase-auth-manager'
@@ -237,7 +239,8 @@ export default function AdminDashboard() {
     { name: 'menu', label: 'Menu Management', icon: MenuSquare },
     { name: 'import', label: 'Import Data', icon: PlusCircle },
     { name: 'restaurant', label: 'Restaurant Info', icon: Info },
-    { name: 'admin', label: 'Admin Management', icon: Shield }
+    { name: 'admin', label: 'Admin Management', icon: Shield },
+    { name: 'profile', label: 'Profile', icon: User } // Add this line
   ]
 
   const stats = [
@@ -498,6 +501,11 @@ export default function AdminDashboard() {
         {/* Admin Management Section */}
         {activeSection === 'admin' && (
           <CombinedAdminManagement onMessage={showMessage} />
+        )}
+
+        {/* Profile Management Section */}
+        {activeSection === 'profile' && (
+          <ProfileManagement onMessage={showMessage} />
         )}
       </div>
     </div>

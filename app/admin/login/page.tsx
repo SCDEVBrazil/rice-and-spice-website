@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { LogoWithIcon } from '@/components/logos'
 import { FirebaseAuthManager } from '@/lib/admin/firebase-auth-manager'
+import { auth } from '@/lib/firebase'
 
 export default function AdminLogin() {
   const [activeTab, setActiveTab] = useState('login')
@@ -46,31 +47,37 @@ export default function AdminLogin() {
   const [isFirstAdmin, setIsFirstAdmin] = useState(false)
   const [firstAdminCode, setFirstAdminCode] = useState('')
 
-  // Check authentication and first admin status
+  // FIXED: Check authentication status only once on mount, no ongoing listener
   useEffect(() => {
     let isMounted = true
     
-    const unsubscribe = FirebaseAuthManager.onAuthStateChange((user) => {
-      if (isMounted && user) {
-        router.push('/admin/dashboard')
-      } else if (isMounted) {
-        setIsInitializing(false)
-      }
-    })
-
-    // Check if we need to initialize first admin (only once)
-    const checkFirstAdmin = async () => {
+    const checkAuthAndInitialize = async () => {
       try {
-        const result = await FirebaseAuthManager.initializeFirstAdmin()
-        if (isMounted && result.success && result.inviteCode) {
-          setIsFirstAdmin(true)
-          setFirstAdminCode(result.inviteCode)
-          setSuccess(`Welcome! This is your first time setup. Use the invite code below to create your admin account.`)
-          setActiveTab('register')
-          setInviteCode(result.inviteCode)
+        // Check if user is already authenticated
+        const currentUser = auth.currentUser
+        if (currentUser) {
+          // User is already logged in, verify they have admin access
+          const adminUser = await FirebaseAuthManager.getCurrentAdmin()
+          if (adminUser && isMounted) {
+            // User is authenticated and has admin access, redirect immediately
+            router.replace('/admin/dashboard')
+            return
+          }
+        }
+
+        // Check if we need to initialize first admin (only if no current user)
+        if (!currentUser) {
+          const result = await FirebaseAuthManager.initializeFirstAdmin()
+          if (isMounted && result.success && result.inviteCode) {
+            setIsFirstAdmin(true)
+            setFirstAdminCode(result.inviteCode)
+            setSuccess(`Welcome! This is your first time setup. Use the invite code below to create your admin account.`)
+            setActiveTab('register')
+            setInviteCode(result.inviteCode)
+          }
         }
       } catch (error) {
-        console.error('Error checking first admin status:', error)
+        console.error('Error checking auth status:', error)
       } finally {
         if (isMounted) {
           setIsInitializing(false)
@@ -78,11 +85,10 @@ export default function AdminLogin() {
       }
     }
 
-    checkFirstAdmin()
+    checkAuthAndInitialize()
 
     return () => {
       isMounted = false
-      unsubscribe()
     }
   }, [router])
 
@@ -99,9 +105,9 @@ export default function AdminLogin() {
       
       if (result.success) {
         setSuccess('Login successful! Redirecting...')
-        // Force immediate redirect without waiting for auth state change
+        // Use replace instead of push to prevent back navigation to login
         setTimeout(() => {
-          router.push('/admin/dashboard')
+          router.replace('/admin/dashboard')
         }, 500)
       } else {
         setError(result.message)
@@ -142,9 +148,9 @@ export default function AdminLogin() {
         setRegPassword('')
         setRegConfirmPassword('')
         setInviteCode('')
-        // Redirect to dashboard after successful registration
+        // Use replace instead of push to prevent back navigation to login
         setTimeout(() => {
-          router.push('/admin/dashboard')
+          router.replace('/admin/dashboard')
         }, 500)
       } else {
         setError(result.message)
@@ -186,7 +192,7 @@ export default function AdminLogin() {
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-900 to-black flex items-center justify-center">
-        <div className="text-amber-100 text-lg">Loading...</div>
+        <div className="text-amber-100 text-lg">Initializing admin system...</div>
       </div>
     )
   }

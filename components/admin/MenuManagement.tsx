@@ -20,7 +20,8 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  Save
+  Save,
+  ChevronDown
 } from 'lucide-react'
 import { adminData } from '@/lib/admin'
 import type { MenuItem } from '@/lib/admin/types'
@@ -36,6 +37,8 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
+  const [activeCategory, setActiveCategory] = useState('tiffin')
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false)
 
   // New item form state
   const [newItemForm, setNewItemForm] = useState({
@@ -183,14 +186,22 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
     return menuItems.filter(item => item.category === category)
   }
 
+  // Get current category details for mobile header
+  const currentCategoryDetails = categories.find(cat => cat.key === activeCategory)
+
+  const handleCategoryChange = (categoryKey: string) => {
+    setActiveCategory(categoryKey)
+    setMobileCategoryOpen(false)
+  }
+
   const renderCategoryItems = (category: string) => {
     const items = getItemsByCategory(category)
     
     if (menuLoading) {
       return (
-        <div className="text-center py-8">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-yellow-400" />
-          <p className="text-amber-100">Loading menu items...</p>
+        <div className="text-center py-6 sm:py-8">
+          <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin mx-auto mb-4 text-yellow-400" />
+          <p className="text-amber-100 text-sm sm:text-base">Loading menu items...</p>
         </div>
       )
     }
@@ -198,11 +209,12 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
     if (items.length === 0) {
       return (
         <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-          <CardContent className="p-8 text-center">
-            <p className="text-amber-100 mb-4">No items found in this category.</p>
+          <CardContent className="p-6 sm:p-8 text-center">
+            <p className="text-amber-100 mb-4 text-sm sm:text-base">No items found in this category.</p>
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
                 <Button 
+                  size="sm"
                   className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 border-2 border-yellow-500"
                   onClick={() => setNewItemForm({...newItemForm, category: category})}
                 >
@@ -217,11 +229,112 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
     }
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {items.map(item => (
           <Card key={item.id} className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
+            <CardContent className="p-4 sm:p-6">
+              {/* Mobile Layout */}
+              <div className="block lg:hidden space-y-4">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-start gap-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-yellow-400 flex-1 min-w-0">{item.name}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {item.isPopular && (
+                        <Badge className="bg-yellow-600 text-amber-900 border-yellow-500 text-xs">
+                          <Star className="w-3 h-3 mr-1" />
+                          Popular
+                        </Badge>
+                      )}
+                      <Badge className={`text-xs ${item.isAvailable ? 'bg-green-600 border-green-500' : 'bg-red-600 border-red-500'} text-white`}>
+                        {item.isAvailable ? 'Available' : 'Unavailable'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <p className="text-amber-100 text-sm line-clamp-2">{item.description}</p>
+                  <p className="text-lg sm:text-xl font-bold text-yellow-400">${item.price.toFixed(2)}</p>
+                </div>
+                
+                {/* Mobile Action Buttons */}
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        onClick={() => handleToggleAvailability(item.id)}
+                        className={`${
+                          item.isAvailable 
+                            ? 'bg-green-600 hover:bg-green-700 text-white border-green-500' 
+                            : 'bg-red-600 hover:bg-red-700 text-white border-red-500'
+                        } border-2 shadow-lg text-xs`}
+                      >
+                        {item.isAvailable ? <Eye className="w-3 h-3 sm:mr-1" /> : <EyeOff className="w-3 h-3 sm:mr-1" />}
+                        <span className="hidden sm:inline">{item.isAvailable ? 'Hide' : 'Show'}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{item.isAvailable ? 'Mark as Unavailable' : 'Mark as Available'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        onClick={() => handleTogglePopularity(item.id)}
+                        className={`${
+                          item.isPopular 
+                            ? 'bg-yellow-600 hover:bg-yellow-700 text-amber-900 border-yellow-500' 
+                            : 'bg-gray-600 hover:bg-gray-700 text-white border-gray-500'
+                        } border-2 shadow-lg text-xs`}
+                      >
+                        <Star className={`w-3 h-3 sm:mr-1 ${item.isPopular ? 'fill-current' : ''}`} />
+                        <span className="hidden sm:inline">Star</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{item.isPopular ? 'Remove from Popular' : 'Mark as Popular'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setEditingItem(item)
+                          setShowEditDialog(true)
+                        }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-500 shadow-lg text-xs"
+                      >
+                        <Edit3 className="w-3 h-3 sm:mr-1" />
+                        <span className="hidden sm:inline">Edit</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit Item</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-500 shadow-lg text-xs"
+                      >
+                        <Trash2 className="w-3 h-3 sm:mr-1" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete Item</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Desktop Layout */}
+              <div className="hidden lg:flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-semibold text-yellow-400">{item.name}</h3>
@@ -320,23 +433,24 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
 
   return (
     <TooltipProvider>
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 sm:space-y-8">
+        {/* Header - Mobile Responsive */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div>
-            <h2 className="text-3xl font-bold text-yellow-400 mb-2" style={{ fontFamily: 'var(--font-cinzel-decorative), serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            <h2 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-2" style={{ fontFamily: 'var(--font-cinzel-decorative), serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
               Menu Management
             </h2>
-            <p className="text-amber-100">Manage your restaurant's menu items by category</p>
+            <p className="text-amber-100 text-sm sm:text-base">Manage your restaurant's menu items by category</p>
           </div>
 
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
-              <Button className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 border-2 border-yellow-500">
+              <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 border-2 border-yellow-500 self-start sm:self-auto">
                 <PlusCircle className="w-4 h-4 mr-2" />
                 Add Menu Item
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-yellow-900/95 border-yellow-600/50 text-amber-100 max-w-2xl">
+            <DialogContent className="bg-yellow-900/95 border-yellow-600/50 text-amber-100 max-w-2xl mx-4">
               <DialogHeader>
                 <DialogTitle className="text-yellow-400">Add New Menu Item</DialogTitle>
               </DialogHeader>
@@ -393,7 +507,7 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center space-x-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-3 sm:space-y-0">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="popular"
@@ -433,30 +547,90 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
           </Dialog>
         </div>
 
-        {/* Tab-based Menu Management */}
-        <Tabs defaultValue="tiffin" className="w-full">
-          <TabsList className="flex justify-between bg-yellow-900/40 border-2 border-yellow-600/30 mb-8 rounded-lg gap-1 px-4 py-4 w-full">
+        {/* Mobile Category Navigation */}
+        <div className="block md:hidden">
+          <div className="bg-yellow-900/40 backdrop-blur-sm rounded-lg border-2 border-yellow-600/30 mb-4">
+            <button
+              onClick={() => setMobileCategoryOpen(!mobileCategoryOpen)}
+              className="w-full flex items-center justify-between p-4 text-amber-100"
+            >
+              <div className="flex items-center space-x-3">
+                <span className="font-medium text-yellow-400">
+                  {currentCategoryDetails?.label || 'Select Category'}
+                </span>
+              </div>
+              <ChevronDown className={`w-5 h-5 text-yellow-400 transition-transform ${mobileCategoryOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {mobileCategoryOpen && (
+              <div className="border-t border-yellow-600/30">
+                {categories.map((category) => (
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryChange(category.key)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-all duration-200 ${
+                      activeCategory === category.key
+                        ? 'bg-yellow-600 text-amber-900'
+                        : 'text-amber-100 hover:bg-yellow-700/50'
+                    } ${category.key !== categories[categories.length - 1].key ? 'border-b border-yellow-600/20' : ''}`}
+                  >
+                    <span className="font-medium">{category.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {renderCategoryItems(currentCategoryDetails?.value || 'Tiffin')}
+        </div>
+
+        {/* Tablet Navigation (768px - 1024px) */}
+        <div className="hidden md:block lg:hidden">
+          <div className="bg-yellow-900/40 backdrop-blur-sm rounded-lg p-2 border-2 border-yellow-600/30 mb-6">
+            <div className="grid grid-cols-2 gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.key}
+                  onClick={() => handleCategoryChange(category.key)}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md font-medium transition-all duration-300 ${
+                    activeCategory === category.key
+                      ? 'bg-yellow-600 text-amber-900 shadow-lg border-2 border-yellow-500'
+                      : 'text-amber-100 hover:bg-yellow-700/50'
+                  }`}
+                >
+                  <span className="text-sm">{category.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          {renderCategoryItems(currentCategoryDetails?.value || 'Tiffin')}
+        </div>
+
+        {/* Desktop Tab-based Menu Management */}
+        <div className="hidden lg:block">
+          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+            <TabsList className="flex justify-between bg-yellow-900/40 border-2 border-yellow-600/30 mb-8 rounded-lg gap-1 px-4 py-4 w-full">
+              {categories.map(category => (
+                <TabsTrigger 
+                  key={category.key}
+                  value={category.key} 
+                  className="data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 text-amber-100 font-medium hover:bg-yellow-700/50 rounded-md text-base whitespace-nowrap px-3 py-3 flex-shrink-0"
+                >
+                  {category.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
             {categories.map(category => (
-              <TabsTrigger 
-                key={category.key}
-                value={category.key} 
-                className="data-[state=active]:bg-yellow-600 data-[state=active]:text-amber-900 text-amber-100 font-medium hover:bg-yellow-700/50 rounded-md text-base whitespace-nowrap px-3 py-3 flex-shrink-0"
-              >
-                {category.label}
-              </TabsTrigger>
+              <TabsContent key={category.key} value={category.key}>
+                {renderCategoryItems(category.value)}
+              </TabsContent>
             ))}
-          </TabsList>
+          </Tabs>
+        </div>
 
-          {categories.map(category => (
-            <TabsContent key={category.key} value={category.key}>
-              {renderCategoryItems(category.value)}
-            </TabsContent>
-          ))}
-        </Tabs>
-
-        {/* Edit Dialog */}
+        {/* Edit Dialog - Mobile Responsive */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="bg-yellow-900/95 border-yellow-600/50 text-amber-100 max-w-2xl">
+          <DialogContent className="bg-yellow-900/95 border-yellow-600/50 text-amber-100 max-w-2xl mx-4">
             <DialogHeader>
               <DialogTitle className="text-yellow-400">Edit Menu Item</DialogTitle>
             </DialogHeader>
@@ -514,7 +688,7 @@ export function MenuManagement({ onMessage }: MenuManagementProps) {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center space-x-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-3 sm:space-y-0">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="edit-popular"

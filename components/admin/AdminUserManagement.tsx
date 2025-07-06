@@ -154,21 +154,22 @@ export function AdminUserManagement({ onMessage, onSwitchToInvites }: AdminUserM
   const managerCount = adminUsers.filter(user => user.role === 'manager').length
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h2 className="text-3xl font-bold text-yellow-400 mb-2" 
+          <h2 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-2" 
               style={{ fontFamily: 'var(--font-cinzel-decorative), serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
             Admin User Management
           </h2>
-          <p className="text-amber-100">Manage admin accounts and permissions</p>
+          <p className="text-amber-100 text-sm sm:text-base">Manage admin accounts and permissions</p>
         </div>
         
         <Button
           onClick={loadAdminUsers}
           variant="outline"
-          className="border-2 border-yellow-600/70 text-yellow-400 hover:bg-yellow-600/30 bg-yellow-900/40 backdrop-blur-sm"
+          size="sm"
+          className="border-2 border-yellow-600/70 text-yellow-400 hover:bg-yellow-600/30 bg-yellow-900/40 backdrop-blur-sm self-start sm:self-auto"
           disabled={isLoading}
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
@@ -176,145 +177,223 @@ export function AdminUserManagement({ onMessage, onSwitchToInvites }: AdminUserM
         </Button>
       </div>
 
-      {/* Enhanced Security Warning */}
+      {/* Enhanced Security Warning - Mobile Responsive */}
       <Alert className="border-red-500 bg-red-900/50">
-        <AlertTriangle className="h-4 w-4 text-red-400" />
-        <AlertDescription className="text-red-200">
+        <AlertTriangle className="h-4 w-4 text-red-400 flex-shrink-0" />
+        <AlertDescription className="text-red-200 text-sm">
           <strong>Complete Deletion:</strong> When you delete an admin user, they will be permanently removed from both the admin system AND Firebase Authentication. This action cannot be undone.
         </AlertDescription>
       </Alert>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Stats Grid - Mobile Responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-amber-100">Total Admins</p>
-                <p className="text-2xl font-bold text-yellow-400">{adminUsers.length}</p>
+                <p className="text-xs sm:text-sm text-amber-100">Total Admins</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-400">{adminUsers.length}</p>
               </div>
-              <Users className="w-8 h-8 text-yellow-400 opacity-70" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-amber-100">Owners</p>
-                <p className="text-2xl font-bold text-yellow-400">{ownerCount}</p>
+                <p className="text-xs sm:text-sm text-amber-100">Owners</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-400">{ownerCount}</p>
               </div>
-              <Crown className="w-8 h-8 text-yellow-400 opacity-70" />
+              <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-blue-900/50 backdrop-blur-sm border-2 border-blue-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-blue-100">Managers</p>
-                <p className="text-2xl font-bold text-blue-400">{managerCount}</p>
+                <p className="text-xs sm:text-sm text-blue-100">Managers</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-400">{managerCount}</p>
               </div>
-              <Shield className="w-8 h-8 text-blue-400 opacity-70" />
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Admin Users List */}
+      {/* Admin Users List - Mobile Responsive */}
       <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-        <CardHeader>
-          <CardTitle className="text-yellow-400">Admin Accounts</CardTitle>
-          <CardDescription className="text-amber-100">
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-lg sm:text-xl text-yellow-400">Admin Accounts</CardTitle>
+          <CardDescription className="text-amber-100 text-sm">
             All administrator accounts and their details
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-20 bg-yellow-600/20 rounded-lg animate-pulse" />
+                <div key={i} className="h-16 sm:h-20 bg-yellow-600/20 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : adminUsers.length === 0 ? (
-            <div className="text-center py-8">
-              <Users className="w-12 h-12 text-yellow-400 mx-auto mb-4 opacity-50" />
-              <p className="text-amber-100">No admin users found</p>
+            <div className="text-center py-6 sm:py-8">
+              <Users className="w-10 h-10 sm:w-12 sm:h-12 text-yellow-400 mx-auto mb-4 opacity-50" />
+              <p className="text-amber-100 text-sm sm:text-base">No admin users found</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {adminUsers.map((user) => (
-                <div key={user.uid} className="flex items-center justify-between p-6 bg-yellow-600/20 rounded-lg border border-yellow-600/30">
-                  <div className="flex items-center space-x-4">
-                    <User className="w-12 h-12 text-yellow-400 bg-yellow-600/30 p-3 rounded-full" />
-                    <div>
-                      <div className="flex items-center space-x-3 mb-1">
-                        <p className="text-lg font-semibold text-amber-100">{user.email}</p>
-                        {getRoleBadge(user.role)}
-                        {user.uid === currentUser?.uid && (
-                          <Badge variant="outline" className="border-green-500 text-green-400">You</Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-4 text-sm text-amber-300">
-                        <span className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Created: {formatDate(user.createdAt)}
-                        </span>
-                        {user.lastLogin && (
-                          <span className="flex items-center">
-                            <Clock className="w-3 h-3 mr-1" />
-                            Last login: {formatDate(user.lastLogin)}
-                          </span>
-                        )}
+                <div key={user.uid} className="p-4 sm:p-6 bg-yellow-600/20 rounded-lg border border-yellow-600/30">
+                  {/* Mobile Layout */}
+                  <div className="block sm:hidden space-y-3">
+                    {/* User Info */}
+                    <div className="flex items-start space-x-3">
+                      <User className="w-10 h-10 text-yellow-400 bg-yellow-600/30 p-2 rounded-full flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <p className="text-base font-semibold text-amber-100 truncate">{user.email}</p>
+                          {getRoleBadge(user.role)}
+                          {user.uid === currentUser?.uid && (
+                            <Badge variant="outline" className="border-green-500 text-green-400 text-xs">You</Badge>
+                          )}
+                        </div>
+                        <div className="space-y-1 text-xs text-amber-300">
+                          <div className="flex items-center">
+                            <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
+                            <span className="truncate">Created: {formatDate(user.createdAt)}</span>
+                          </div>
+                          {user.lastLogin && (
+                            <div className="flex items-center">
+                              <Clock className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <span className="truncate">Last: {formatDate(user.lastLogin)}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    {/* Role Change Button (owners only, not for themselves) */}
-                    {currentUser?.role === 'owner' && user.uid !== currentUser.uid && (
-                      <Button
-                        onClick={() => updateUserRole(user.uid, user.role === 'owner' ? 'manager' : 'owner')}
-                        size="sm"
-                        className={user.role === 'owner' 
-                          ? "bg-blue-600 hover:bg-blue-700 text-white" 
-                          : "bg-yellow-600 hover:bg-yellow-700 text-amber-900"
-                        }
-                      >
-                        {user.role === 'owner' ? (
-                          <>
-                            <Shield className="w-3 h-3 mr-1" />
-                            Make Manager
-                          </>
-                        ) : (
-                          <>
-                            <Crown className="w-3 h-3 mr-1" />
-                            Make Owner
-                          </>
-                        )}
-                      </Button>
-                    )}
                     
-                    {/* Delete Button (only if not self and current user is owner) */}
-                    {currentUser && 
-                     user.uid !== currentUser.uid && 
-                     currentUser.role === 'owner' && (
-                      <Button
-                        onClick={() => deleteUser(user.uid, user.email)}
-                        size="sm"
-                        className="bg-red-600 hover:bg-red-700 text-white"
-                        disabled={deletingUsers.has(user.uid)}
-                      >
-                        {deletingUsers.has(user.uid) ? (
-                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-3 h-3 mr-1" />
-                        )}
-                        {deletingUsers.has(user.uid) ? 'Deleting...' : 'Delete'}
-                      </Button>
-                    )}
+                    {/* Mobile Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      {/* Role Change Button (owners only, not for themselves) */}
+                      {currentUser?.role === 'owner' && user.uid !== currentUser.uid && (
+                        <Button
+                          onClick={() => updateUserRole(user.uid, user.role === 'owner' ? 'manager' : 'owner')}
+                          size="sm"
+                          className={`flex-1 min-w-[120px] ${user.role === 'owner' 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-yellow-600 hover:bg-yellow-700 text-amber-900"
+                          }`}
+                        >
+                          {user.role === 'owner' ? (
+                            <>
+                              <Shield className="w-3 h-3 mr-1" />
+                              Make Manager
+                            </>
+                          ) : (
+                            <>
+                              <Crown className="w-3 h-3 mr-1" />
+                              Make Owner
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      
+                      {/* Delete Button (only if not self and current user is owner) */}
+                      {currentUser && 
+                       user.uid !== currentUser.uid && 
+                       currentUser.role === 'owner' && (
+                        <Button
+                          onClick={() => deleteUser(user.uid, user.email)}
+                          size="sm"
+                          className="bg-red-600 hover:bg-red-700 text-white min-w-[100px]"
+                          disabled={deletingUsers.has(user.uid)}
+                        >
+                          {deletingUsers.has(user.uid) ? (
+                            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3 h-3 mr-1" />
+                          )}
+                          {deletingUsers.has(user.uid) ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Desktop Layout */}
+                  <div className="hidden sm:flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <User className="w-12 h-12 text-yellow-400 bg-yellow-600/30 p-3 rounded-full" />
+                      <div>
+                        <div className="flex items-center space-x-3 mb-1">
+                          <p className="text-lg font-semibold text-amber-100">{user.email}</p>
+                          {getRoleBadge(user.role)}
+                          {user.uid === currentUser?.uid && (
+                            <Badge variant="outline" className="border-green-500 text-green-400">You</Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-4 text-sm text-amber-300">
+                          <span className="flex items-center">
+                            <Calendar className="w-3 h-3 mr-1" />
+                            Created: {formatDate(user.createdAt)}
+                          </span>
+                          {user.lastLogin && (
+                            <span className="flex items-center">
+                              <Clock className="w-3 h-3 mr-1" />
+                              Last login: {formatDate(user.lastLogin)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3">
+                      {/* Role Change Button (owners only, not for themselves) */}
+                      {currentUser?.role === 'owner' && user.uid !== currentUser.uid && (
+                        <Button
+                          onClick={() => updateUserRole(user.uid, user.role === 'owner' ? 'manager' : 'owner')}
+                          size="sm"
+                          className={user.role === 'owner' 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-yellow-600 hover:bg-yellow-700 text-amber-900"
+                          }
+                        >
+                          {user.role === 'owner' ? (
+                            <>
+                              <Shield className="w-3 h-3 mr-1" />
+                              Make Manager
+                            </>
+                          ) : (
+                            <>
+                              <Crown className="w-3 h-3 mr-1" />
+                              Make Owner
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      
+                      {/* Delete Button (only if not self and current user is owner) */}
+                      {currentUser && 
+                       user.uid !== currentUser.uid && 
+                       currentUser.role === 'owner' && (
+                        <Button
+                          onClick={() => deleteUser(user.uid, user.email)}
+                          size="sm"
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          disabled={deletingUsers.has(user.uid)}
+                        >
+                          {deletingUsers.has(user.uid) ? (
+                            <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3 h-3 mr-1" />
+                          )}
+                          {deletingUsers.has(user.uid) ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -323,17 +402,18 @@ export function AdminUserManagement({ onMessage, onSwitchToInvites }: AdminUserM
         </CardContent>
       </Card>
 
-      {/* Add New Admin User CTA */}
+      {/* Add New Admin User CTA - Mobile Responsive */}
       <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div>
-              <h3 className="text-lg font-semibold text-yellow-400 mb-1">Add New Admin User</h3>
-              <p className="text-amber-100 text-sm">Create invite codes for new administrators</p>
+              <h3 className="text-base sm:text-lg font-semibold text-yellow-400 mb-1">Add New Admin User</h3>
+              <p className="text-amber-100 text-xs sm:text-sm">Create invite codes for new administrators</p>
             </div>
             <Button
               onClick={onSwitchToInvites}
-              className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 font-medium"
+              size="sm"
+              className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 font-medium self-start sm:self-auto"
             >
               <Key className="w-4 h-4 mr-2" />
               Manage Invites
@@ -342,10 +422,10 @@ export function AdminUserManagement({ onMessage, onSwitchToInvites }: AdminUserM
         </CardContent>
       </Card>
 
-      {/* Additional Information */}
+      {/* Additional Information - Mobile Responsive */}
       <Alert className="border-blue-500 bg-blue-900/50">
-        <CheckCircle className="h-4 w-4 text-blue-400" />
-        <AlertDescription className="text-blue-200">
+        <CheckCircle className="h-4 w-4 text-blue-400 flex-shrink-0" />
+        <AlertDescription className="text-blue-200 text-sm">
           <strong>Permission Levels:</strong> Owners can manage all admin accounts and have full system access. Managers can manage restaurant content but cannot modify admin accounts.
         </AlertDescription>
       </Alert>

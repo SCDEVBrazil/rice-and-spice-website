@@ -170,21 +170,22 @@ export function InviteCodeManager({ onMessage }: InviteCodeManagerProps) {
   const expiredCodesCount = inviteCodes.filter(code => !code.isUsed && new Date(code.expiresAt) < new Date()).length
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h2 className="text-3xl font-bold text-yellow-400 mb-2" 
+          <h2 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-2" 
               style={{ fontFamily: 'var(--font-cinzel-decorative), serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
             Invite Code Management
           </h2>
-          <p className="text-amber-100">Generate and manage invite codes for new admin accounts</p>
+          <p className="text-amber-100 text-sm sm:text-base">Generate and manage invite codes for new admin accounts</p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
           <Button
             onClick={loadInviteCodes}
             variant="outline"
+            size="sm"
             className="border-2 border-yellow-600/70 text-yellow-400 hover:bg-yellow-600/30 bg-yellow-900/40 backdrop-blur-sm"
             disabled={isLoading}
           >
@@ -193,6 +194,7 @@ export function InviteCodeManager({ onMessage }: InviteCodeManagerProps) {
           </Button>
           <Button
             onClick={generateInviteCode}
+            size="sm"
             className="bg-green-600 hover:bg-green-700 text-white border-2 border-green-500"
             disabled={isGenerating}
           >
@@ -211,77 +213,78 @@ export function InviteCodeManager({ onMessage }: InviteCodeManagerProps) {
         </div>
       </div>
 
-      {/* Info Alert */}
+      {/* Info Alert - Mobile Responsive */}
       <Alert className="border-blue-500 bg-blue-900/50">
-        <Shield className="h-4 w-4 text-blue-400" />
-        <AlertDescription className="text-blue-200">
+        <Shield className="h-4 w-4 text-blue-400 flex-shrink-0" />
+        <AlertDescription className="text-blue-200 text-sm">
           Invite codes are valid for 24 hours and can only be used once. Share them securely with new admins.
         </AlertDescription>
       </Alert>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Stats Grid - Mobile Responsive */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-amber-100">Total Codes</p>
-                <p className="text-2xl font-bold text-yellow-400">{inviteCodes.length}</p>
+                <p className="text-xs sm:text-sm text-amber-100">Total Codes</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-400">{inviteCodes.length}</p>
               </div>
-              <Key className="w-8 h-8 text-yellow-400 opacity-70" />
+              <Key className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-green-900/50 backdrop-blur-sm border-2 border-green-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-100">Active</p>
-                <p className="text-2xl font-bold text-green-400">{activeCodesCount}</p>
+                <p className="text-xs sm:text-sm text-green-100">Active</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-400">{activeCodesCount}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-400 opacity-70" />
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gray-900/50 backdrop-blur-sm border-2 border-gray-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-100">Used</p>
-                <p className="text-2xl font-bold text-gray-400">{usedCodesCount}</p>
+                <p className="text-xs sm:text-sm text-gray-100">Used</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-400">{usedCodesCount}</p>
               </div>
-              <User className="w-8 h-8 text-gray-400 opacity-70" />
+              <User className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-red-900/50 backdrop-blur-sm border-2 border-red-600/50">
-          <CardContent className="p-4">
+          <CardContent className="p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-red-100">Expired</p>
-                <p className="text-2xl font-bold text-red-400">{expiredCodesCount}</p>
+                <p className="text-xs sm:text-sm text-red-100">Expired</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-400">{expiredCodesCount}</p>
               </div>
-              <Clock className="w-8 h-8 text-red-400 opacity-70" />
+              <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 opacity-70" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Cleanup Button */}
+      {/* Cleanup Button - Mobile Responsive */}
       {expiredCodesCount > 0 && (
         <Card className="bg-orange-900/50 backdrop-blur-sm border-2 border-orange-600/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
               <div>
-                <h3 className="text-lg font-semibold text-orange-400">Cleanup Expired Codes</h3>
-                <p className="text-orange-200">Remove {expiredCodesCount} expired invite codes to keep your list clean</p>
+                <h3 className="text-base sm:text-lg font-semibold text-orange-400">Cleanup Expired Codes</h3>
+                <p className="text-orange-200 text-sm">Remove {expiredCodesCount} expired invite codes to keep your list clean</p>
               </div>
               <Button
                 onClick={cleanupExpiredCodes}
-                className="bg-orange-600 hover:bg-orange-700 text-white"
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700 text-white self-start sm:self-auto"
                 disabled={isLoading}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -292,26 +295,26 @@ export function InviteCodeManager({ onMessage }: InviteCodeManagerProps) {
         </Card>
       )}
 
-      {/* Invite Codes List */}
+      {/* Invite Codes List - Mobile Responsive */}
       <Card className="bg-yellow-900/50 backdrop-blur-sm border-2 border-yellow-600/50">
-        <CardHeader>
-          <CardTitle className="text-yellow-400">Invite Codes</CardTitle>
-          <CardDescription className="text-amber-100">
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="text-lg sm:text-xl text-yellow-400">Invite Codes</CardTitle>
+          <CardDescription className="text-amber-100 text-sm">
             All generated invite codes and their status
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 sm:px-6">
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-yellow-600/20 rounded-lg animate-pulse" />
+                <div key={i} className="h-12 sm:h-16 bg-yellow-600/20 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : inviteCodes.length === 0 ? (
-            <div className="text-center py-8">
-              <Key className="w-16 h-16 text-yellow-400/50 mx-auto mb-4" />
-              <p className="text-amber-100">No invite codes generated yet</p>
-              <p className="text-amber-200 text-sm">Click "Generate Code" to create your first invite code</p>
+            <div className="text-center py-6 sm:py-8">
+              <Key className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-400/50 mx-auto mb-4" />
+              <p className="text-amber-100 text-sm sm:text-base">No invite codes generated yet</p>
+              <p className="text-amber-200 text-xs sm:text-sm">Click "Generate Code" to create your first invite code</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -320,81 +323,161 @@ export function InviteCodeManager({ onMessage }: InviteCodeManagerProps) {
                 return (
                   <div
                     key={code.id}
-                    className="flex items-center justify-between p-4 bg-yellow-900/30 rounded-lg border border-yellow-600/30"
+                    className="p-3 sm:p-4 bg-yellow-900/30 rounded-lg border border-yellow-600/30"
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <code className="text-sm font-mono text-yellow-300 bg-yellow-900/50 px-2 py-1 rounded">
+                    {/* Mobile Layout */}
+                    <div className="block sm:hidden space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <code className="text-xs font-mono text-yellow-300 bg-yellow-900/50 px-2 py-1 rounded break-all">
                           {code.code}
                         </code>
-                        <Badge className={status.color}>
+                        <Badge className={`${status.color} text-xs`}>
                           {status.label}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-amber-200">
+                      
+                      <div className="space-y-1 text-xs text-amber-200">
                         <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          Created: {formatDate(code.createdAt)}
+                          <Calendar className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">Created: {formatDate(code.createdAt)}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          Expires: {formatDate(code.expiresAt)}
+                          <Clock className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">Expires: {formatDate(code.expiresAt)}</span>
                         </div>
                         {code.isUsed && code.usedBy && (
                           <div className="flex items-center gap-1">
-                            <User className="w-3 h-3" />
-                            Used by: {code.usedBy}
+                            <User className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate">Used by: {code.usedBy}</span>
                           </div>
                         )}
                       </div>
-                    </div>
-                    
-                    {/* UPDATED: Buttons section with Delete functionality */}
-                    <div className="flex items-center gap-2">
-                      {/* Copy Button (only for active codes) */}
-                      {!code.isUsed && new Date(code.expiresAt) > new Date() && (
+                      
+                      {/* Mobile Action Buttons */}
+                      <div className="flex gap-2">
+                        {/* Copy Button (only for active codes) */}
+                        {!code.isUsed && new Date(code.expiresAt) > new Date() && (
+                          <Button
+                            onClick={() => copyToClipboard(code.code, code.id)}
+                            size="sm"
+                            className={`flex-1 transition-all duration-200 text-xs ${
+                              copiedCodeId === code.id
+                                ? 'bg-green-600 hover:bg-green-700 text-white'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            }`}
+                          >
+                            {copiedCodeId === code.id ? (
+                              <>
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3 mr-1" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        )}
+                        
+                        {/* Delete Button (for all codes) */}
                         <Button
-                          onClick={() => copyToClipboard(code.code, code.id)}
+                          onClick={() => deleteInviteCode(code.id, code.code)}
                           size="sm"
-                          className={`transition-all duration-200 ${
-                            copiedCodeId === code.id
-                              ? 'bg-green-600 hover:bg-green-700 text-white'
-                              : 'bg-blue-600 hover:bg-blue-700 text-white'
-                          }`}
+                          className="bg-red-600 hover:bg-red-700 text-white text-xs min-w-[80px]"
+                          disabled={deletingCodes.has(code.id)}
                         >
-                          {copiedCodeId === code.id ? (
+                          {deletingCodes.has(code.id) ? (
                             <>
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Copied!
+                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                              Deleting...
                             </>
                           ) : (
                             <>
-                              <Copy className="w-4 h-4 mr-1" />
-                              Copy
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              Delete
                             </>
                           )}
                         </Button>
-                      )}
+                      </div>
+                    </div>
+
+                    {/* Desktop Layout */}
+                    <div className="hidden sm:flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <code className="text-sm font-mono text-yellow-300 bg-yellow-900/50 px-2 py-1 rounded">
+                            {code.code}
+                          </code>
+                          <Badge className={status.color}>
+                            {status.label}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-amber-200">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            Created: {formatDate(code.createdAt)}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            Expires: {formatDate(code.expiresAt)}
+                          </div>
+                          {code.isUsed && code.usedBy && (
+                            <div className="flex items-center gap-1">
+                              <User className="w-3 h-3" />
+                              Used by: {code.usedBy}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       
-                      {/* Delete Button (for all codes) */}
-                      <Button
-                        onClick={() => deleteInviteCode(code.id, code.code)}
-                        size="sm"
-                        className="bg-red-600 hover:bg-red-700 text-white"
-                        disabled={deletingCodes.has(code.id)}
-                      >
-                        {deletingCodes.has(code.id) ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
-                          </>
+                      {/* Desktop Action Buttons */}
+                      <div className="flex items-center gap-2">
+                        {/* Copy Button (only for active codes) */}
+                        {!code.isUsed && new Date(code.expiresAt) > new Date() && (
+                          <Button
+                            onClick={() => copyToClipboard(code.code, code.id)}
+                            size="sm"
+                            className={`transition-all duration-200 ${
+                              copiedCodeId === code.id
+                                ? 'bg-green-600 hover:bg-green-700 text-white'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            }`}
+                          >
+                            {copiedCodeId === code.id ? (
+                              <>
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4 mr-1" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
                         )}
-                      </Button>
+                        
+                        {/* Delete Button (for all codes) */}
+                        <Button
+                          onClick={() => deleteInviteCode(code.id, code.code)}
+                          size="sm"
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          disabled={deletingCodes.has(code.id)}
+                        >
+                          {deletingCodes.has(code.id) ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )

@@ -65,29 +65,29 @@ export function Footer() {
     <footer className="bg-gray-900 text-white py-8 sm:py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
-          {/* Logo and Description */}
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
+          {/* FIXED: Logo and Description - Centered on Mobile */}
+          <div className="md:col-span-2 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <LogoWithIcon width={40} height={40} />
               <span className="font-decorative text-xl sm:text-2xl text-gold">
                 {restaurantInfo?.name || 'Rice and Spice'}
               </span>
             </div>
-            <p className="text-gray-300 mb-4 sm:mb-6 max-w-md text-sm sm:text-base">
+            <p className="text-gray-300 mb-4 sm:mb-6 max-w-md mx-auto md:mx-0 text-sm sm:text-base">
               {restaurantInfo?.description || 
                'Authentic Indian cuisine in the heart of Peoria, Illinois. Experience the rich flavors and aromatic spices of India.'}
             </p>
             <div className="space-y-2">
-              <div className="flex items-start gap-2 text-gray-300 text-sm sm:text-base">
+              <div className="flex items-start justify-center md:justify-start gap-2 text-gray-300 text-sm sm:text-base">
                 <MapPin className="h-4 w-4 text-gold mt-0.5 flex-shrink-0" />
-                <span>{restaurantInfo?.address || '1200 W Main St Ste 10, Peoria, IL 61606'}</span>
+                <span className="text-center md:text-left">{restaurantInfo?.address || '1200 W Main St Ste 10, Peoria, IL 61606'}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-300 text-sm sm:text-base">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-gray-300 text-sm sm:text-base">
                 <Phone className="h-4 w-4 text-gold flex-shrink-0" />
                 <span>{restaurantInfo?.phone || '(309) 670-1029'}</span>
               </div>
             </div>
-            <div className="flex gap-4 mt-4 sm:mt-6">
+            <div className="flex gap-4 mt-4 sm:mt-6 justify-center md:justify-start">
               <Link
                 href="https://www.facebook.com/share/16NJkM4ooY/?mibextid=wwXIfr"
                 target="_blank"

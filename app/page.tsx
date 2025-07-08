@@ -1,4 +1,4 @@
-// app/page.tsx - SEO-optimized homepage
+// app/page.tsx - SEO-optimized homepage with FIXED structured data
 import { Metadata } from 'next'
 import HomePage from '@/components/pages/HomePage'
 
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   },
 }
 
-// Structured data for homepage
+// FIXED: Structured data for homepage - NO MORE EVENTS SCHEMA
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -108,29 +108,51 @@ const structuredData = {
         "bestRating": "5",
         "worstRating": "1"
       },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Saturday Buffet",
-        "itemListElement": {
+      // FIXED: Saturday Buffet as Service Offering instead of FoodEvent
+      "makesOffer": [
+        {
           "@type": "Offer",
-          "itemOffered": {
-            "@type": "FoodEvent",
-            "name": "Saturday Indian Buffet",
-            "description": "All-you-can-eat Indian buffet featuring rotating selection of authentic dishes including Chicken Tikka Masala, Biryani, Dal, Naan, and much more",
-            "startDate": "2024-01-01",
-            "eventSchedule": {
-              "@type": "Schedule",
-              "scheduleTimezone": "America/Chicago",
-              "byDay": "Saturday",
-              "startTime": "11:00",
-              "endTime": "15:00"
-            }
-          },
+          "name": "Saturday Indian Buffet",
+          "description": "All-you-can-eat Indian buffet featuring rotating selection of authentic dishes including Chicken Tikka Masala, Biryani, Dal, Naan, and much more. Available every Saturday from 11:00 AM to 3:00 PM.",
           "price": "17.99",
           "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
+          "availability": "https://schema.org/InStock",
+          "availableAtOrFrom": {
+            "@type": "Restaurant",
+            "@id": "https://riceandspicepeoria.com/#restaurant"
+          },
+          "category": "Buffet Service",
+          "validFrom": "2024-01-01",
+          "eligibleRegion": {
+            "@type": "Place",
+            "name": "Peoria, Illinois"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Indian Catering Services",
+          "description": "Professional Indian catering services for events, parties, corporate functions, and special occasions in Peoria, Illinois area.",
+          "category": "Catering Service",
+          "availableAtOrFrom": {
+            "@type": "Restaurant",
+            "@id": "https://riceandspicepeoria.com/#restaurant"
+          },
+          "areaServed": {
+            "@type": "Place",
+            "name": "Peoria, Illinois"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Private Event Space",
+          "description": "Private dining room available for special celebrations, business meetings, and family gatherings with authentic Indian cuisine.",
+          "category": "Event Venue",
+          "availableAtOrFrom": {
+            "@type": "Restaurant",
+            "@id": "https://riceandspicepeoria.com/#restaurant"
+          }
         }
-      }
+      ]
     },
     {
       "@type": "LocalBusiness",
@@ -203,7 +225,7 @@ const structuredData = {
 export default function Page() {
   return (
     <>
-      {/* Structured Data */}
+      {/* FIXED: Structured Data - NO MORE EVENTS SCHEMA */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

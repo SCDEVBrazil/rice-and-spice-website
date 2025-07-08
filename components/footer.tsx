@@ -144,26 +144,26 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* FIXED: Hours - Centered Title, Improved Mobile Layout */}
-          <div>
-            <h3 className="text-lg font-semibold text-gold mb-4 text-center md:text-left">Hours</h3>
+          {/* FIXED: Hours - Centered Title and Content on Mobile */}
+          <div className="text-center md:text-left">
+            <h3 className="text-lg font-semibold text-gold mb-4">Hours</h3>
             <div className="space-y-2 text-gray-300">
-              {/* Mobile: Stacked Layout | Desktop: Side-by-side */}
-              <div className="flex flex-col sm:flex-row sm:justify-between">
+              {/* Mobile: Centered Stacked Layout | Desktop: Side-by-side */}
+              <div className="flex flex-col md:flex-row md:justify-between">
                 <span className="text-sm sm:text-base font-medium">Monday - Friday</span>
-                <span className="text-sm sm:text-base text-gray-400 sm:text-gray-300">
+                <span className="text-sm sm:text-base text-gray-400 md:text-gray-300">
                   {formatHours(restaurantInfo?.hours?.monday) || '11AM-2:30PM, 4:30-9PM'}
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between">
+              <div className="flex flex-col md:flex-row md:justify-between">
                 <span className="text-sm sm:text-base font-medium">Saturday</span>
-                <span className="text-sm sm:text-base text-gray-400 sm:text-gray-300">
+                <span className="text-sm sm:text-base text-gray-400 md:text-gray-300">
                   {formatHours(restaurantInfo?.hours?.saturday) || '11AM-3PM, 5-9PM'}
                 </span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between">
+              <div className="flex flex-col md:flex-row md:justify-between">
                 <span className="text-sm sm:text-base font-medium">Sunday</span>
-                <span className="text-sm sm:text-base text-gray-400 sm:text-gray-300">
+                <span className="text-sm sm:text-base text-gray-400 md:text-gray-300">
                   {formatHours(restaurantInfo?.hours?.sunday) || 'Closed'}
                 </span>
               </div>

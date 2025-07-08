@@ -348,7 +348,7 @@ export default function HomePage() {
           <div className="h-0.5 w-3/4 bg-gradient-to-r from-transparent via-yellow-500/80 to-transparent shadow-lg"></div>
         </div>
 
-        {/* Dynamic Saturday Buffet Section */}
+        {/* FIXED: Dynamic Saturday Buffet Section - Mobile Responsive */}
         <section className="py-16 px-4" aria-labelledby="buffet-heading">
           <div className="max-w-4xl mx-auto text-center">
             {/* Header Section */}
@@ -381,7 +381,7 @@ export default function HomePage() {
             </header>
             
             {/* Featured Dishes */}
-            <article className="bg-yellow-900/40 backdrop-blur-sm rounded-lg p-8 border-2 border-yellow-600/50 shadow-2xl">
+            <article className="bg-yellow-900/40 backdrop-blur-sm rounded-lg p-6 sm:p-8 border-2 border-yellow-600/50 shadow-2xl">
               <h3 className="text-lg text-orange-300 mb-4 font-medium">Featured Saturday Buffet Items:</h3>
               <div className="text-xl text-amber-100 leading-relaxed">
                 <p className="mb-2">
@@ -407,12 +407,13 @@ export default function HomePage() {
                 </div>
               )}
               
-              {/* Buffet CTA */}
-              <div className="mt-6">
+              {/* FIXED: Mobile-Responsive Buffet CTA Button */}
+              <div className="mt-6 px-2 sm:px-0">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 px-8 py-3 text-lg font-bold rounded-full shadow-lg">
-                      Learn More About Our Saturday Buffet
+                    <Button className="bg-yellow-600 hover:bg-yellow-700 text-amber-900 px-4 sm:px-8 py-3 text-base sm:text-lg font-bold rounded-full shadow-lg w-full sm:w-auto max-w-sm sm:max-w-none">
+                      <span className="block sm:hidden">Learn More About Buffet</span>
+                      <span className="hidden sm:block">Learn More About Our Saturday Buffet</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[500px]">
@@ -429,7 +430,7 @@ export default function HomePage() {
           <div className="h-px w-3/4 bg-gradient-to-r from-transparent via-yellow-600/50 to-transparent"></div>
         </div>
 
-        {/* Indian Tadka Sister Restaurant Section */}
+        {/* FIXED: Indian Tadka Sister Restaurant Section - Mobile Responsive */}
         <section className="py-16 px-4" aria-labelledby="sister-restaurant-heading">
           <div className="max-w-4xl mx-auto">
             <header className="text-center mb-10">
@@ -441,16 +442,18 @@ export default function HomePage() {
 
             <article className="bg-yellow-900/40 backdrop-blur-sm rounded-lg shadow-2xl overflow-hidden border-2 border-yellow-600/50">
               <div className="flex flex-col md:flex-row min-h-[500px]">
-                <div className="md:w-1/2 p-8 flex flex-col justify-between">
+                <div className="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
                   <div>
                     <h3 className="text-2xl md:text-3xl font-serif text-yellow-400 mb-4 tracking-wider" style={{ fontFamily: 'var(--font-cinzel-decorative), serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
                       Indian Tadka
                     </h3>
-                    <div className="space-y-2 mb-6">
-                      <span className="bg-orange-700 inline-block px-4 py-2 rounded text-yellow-400 font-bold text-center border border-yellow-600">
+                    
+                    {/* FIXED: Mobile-Responsive Button Layout */}
+                    <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                      <span className="bg-orange-700 px-4 py-2 rounded text-yellow-400 font-bold text-center border border-yellow-600 text-sm sm:text-base">
                         Open Sundays!
                       </span>
-                      <span className="bg-yellow-600 inline-block px-4 py-2 rounded text-amber-900 font-bold text-center ml-2 border border-orange-600">
+                      <span className="bg-yellow-600 px-4 py-2 rounded text-amber-900 font-bold text-center border border-orange-600 text-sm sm:text-base">
                         Sunday Lunch Buffet
                       </span>
                     </div>
@@ -458,20 +461,20 @@ export default function HomePage() {
                   
                   <address className="space-y-4 flex-grow not-italic">
                     <div className="flex items-start gap-3">
-                      <MapPin className="h-5 w-5 text-yellow-400 mt-1" aria-hidden="true" />
-                      <p className="text-amber-100">7815 Knoxville Ave Unit #12, Peoria, IL 61614</p>
+                      <MapPin className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" aria-hidden="true" />
+                      <p className="text-amber-100 text-sm sm:text-base">7815 Knoxville Ave Unit #12, Peoria, IL 61614</p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Phone className="h-5 w-5 text-yellow-400 mt-1" aria-hidden="true" />
-                      <p className="text-amber-100">
+                      <Phone className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" aria-hidden="true" />
+                      <p className="text-amber-100 text-sm sm:text-base">
                         <a href="tel:3095982024" className="hover:text-yellow-300 transition-colors">
                           (309) 598-2024
                         </a>
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
-                      <Clock className="h-5 w-5 text-yellow-400 mt-1" aria-hidden="true" />
-                      <div className="text-amber-100">
+                      <Clock className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" aria-hidden="true" />
+                      <div className="text-amber-100 text-sm sm:text-base">
                         <p><strong>Tuesday - Saturday:</strong> 11:00AM - 2:30PM, 5:00PM - 9:30PM</p>
                         <p><strong>Sunday:</strong> 11:00AM - 2:30PM (Lunch Buffet), 5:00PM - 8:30PM</p>
                         <p><strong>Monday:</strong> Closed</p>
@@ -481,14 +484,14 @@ export default function HomePage() {
                   
                   <nav className="space-y-3 mt-6">
                     <div className="flex items-start gap-3">
-                      <svg className="h-5 w-5 text-yellow-400 mt-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="h-5 w-5 text-yellow-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                       </svg>
                       <Link
                         href="https://indiantadka309.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-yellow-400 hover:text-yellow-300 underline transition-colors"
+                        className="text-yellow-400 hover:text-yellow-300 underline transition-colors text-sm sm:text-base"
                       >
                         Visit Indian Tadka Website - Menu & Online Ordering
                       </Link>

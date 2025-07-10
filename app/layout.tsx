@@ -152,7 +152,7 @@ export default function RootLayout({
         <meta name="business:phone" content="(309) 670-1029" />
         <meta name="business:address" content="1200 W Main St Ste 10, Peoria, IL 61606" />
         
-        {/* Schema.org structured data */}
+        {/* FIXED: Schema.org structured data - NO MORE EVENTS SCHEMA */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -198,21 +198,23 @@ export default function RootLayout({
               "acceptsReservations": "True",
               "paymentAccepted": "Cash, Credit Card",
               "currenciesAccepted": "USD",
-              "hasOfferCatalog": {
-                "@type": "OfferCatalog",
-                "name": "Saturday Buffet",
-                "itemListElement": {
+              // FIXED: Removed hasOfferCatalog with FoodEvent - now using proper service schema
+              "makesOffer": [
+                {
                   "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "FoodEvent",
-                    "name": "Saturday Indian Buffet",
-                    "description": "All-you-can-eat Indian buffet featuring rotating selection of authentic dishes"
-                  },
+                  "name": "Saturday Indian Buffet",
+                  "description": "All-you-can-eat Indian buffet featuring rotating selection of authentic dishes including Chicken Tikka Masala, Biryani, Dal, Naan, and much more. Available every Saturday.",
                   "price": "17.99",
                   "priceCurrency": "USD",
-                  "availability": "https://schema.org/Saturday"
+                  "availability": "https://schema.org/InStock",
+                  "category": "Buffet Service",
+                  "validFrom": "2024-01-01",
+                  "eligibleRegion": {
+                    "@type": "Place",
+                    "name": "Peoria, Illinois"
+                  }
                 }
-              },
+              ],
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.8",

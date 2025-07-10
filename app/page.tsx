@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   },
 }
 
-// FIXED: Structured data for homepage - NO MORE EVENTS SCHEMA
+// FIXED: Structured data for homepage - NO MORE EVENTS SCHEMA - CACHE BUSTING VERSION
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -108,7 +108,7 @@ const structuredData = {
         "bestRating": "5",
         "worstRating": "1"
       },
-      // FIXED: Saturday Buffet as Service Offering instead of FoodEvent
+      // FIXED: Saturday Buffet as Service Offering instead of FoodEvent - CACHE BUSTING VERSION
       "makesOffer": [
         {
           "@type": "Offer",
@@ -147,6 +147,16 @@ const structuredData = {
           "name": "Private Event Space",
           "description": "Private dining room available for special celebrations, business meetings, and family gatherings with authentic Indian cuisine.",
           "category": "Event Venue",
+          "availableAtOrFrom": {
+            "@type": "Restaurant",
+            "@id": "https://riceandspicepeoria.com/#restaurant"
+          }
+        },
+        {
+          "@type": "Offer",
+          "name": "Takeout Service",
+          "description": "Quick and convenient takeout service for all menu items with authentic Indian flavors.",
+          "category": "Takeout Service",
           "availableAtOrFrom": {
             "@type": "Restaurant",
             "@id": "https://riceandspicepeoria.com/#restaurant"
@@ -225,7 +235,7 @@ const structuredData = {
 export default function Page() {
   return (
     <>
-      {/* FIXED: Structured Data - NO MORE EVENTS SCHEMA */}
+      {/* FIXED: Structured Data - NO MORE EVENTS SCHEMA - CACHE BUSTING VERSION */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
